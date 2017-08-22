@@ -1,22 +1,43 @@
+osx_image: xcode8.3
+dist: trusty
+sudo: false
 language: node_js
-node_js:
-- '8'
+node_js: '8'
+env:
+  global:
+  - ELECTRON_CACHE=$HOME/.cache/electron
+  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+os:
+- linux
+- osx
 cache:
   directories:
   - node_modules
+  - "$HOME/.cache/electron"
+  - "$HOME/.cache/electron-builder"
+  - "$HOME/.npm/_prebuilds"
+addons:
+  apt:
+    packages:
+    - libsecret-1-0
+before_install:
+- mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.2.0/git-lfs-$(["$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.2.0.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1 && /tmp/git-lfs/git-lfs pull
+- curl -L https://yarnpkg.com/latest.tar.gz | tar xvz && mv dist $HOME/.yarn
+- export PATH="$HOME/.yarn/bin:$PATH"
 install:
-  - wget -nc https://dl.winehq.org/wine-builds/Release.key
-  - sudo apt-key add Release.key
-  - sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
-  - sudo apt-get update
-  - sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils winehq-stable gcc-multilib g++-multilib
-  - npm install
+- yarn
 script:
-  - npm run dist
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn dist --linux --x64 --ia32; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn dist --mac --win; fi
+before_cache:
+- rm -rf $HOME/.cache/electron-builder/wine
+branches:
+  except:
+  - "/^v\\d+\\.\\d+\\.\\d+$/"
 deploy:
   provider: releases
   api_key:
-    secure: wrbQ1q4oHxrIUg4Fvbzj8AbRovm6+lqF79VWDGh71TZPrROhESkn+HFT5cFSlLgkhCnD0pZ0nzNHbURbtdIPJt494sin5LkcF5yc3jGWfU6qHtHxeQL7iy8vlODzUGqYJ0rpYFH/4J2z3yYWXJ+fJnBwI2YHPyuu9sV7HynHsDHVqY+T5UKX5ESTmRoe3MyYjx96SmOjJD00zqZxBsdAMp8vbZG/CocvHWJemzSpqaUBxqaw/qAW9UsiDgHjEUUKSpFGKSA6CmyCtNmL9utyZOSVAilMjUQ0YqMvxowPQpEkAIAccJylGozM7KhJvMi24Hhfgr+k2AQLrCkULXO//LUdGV6uwCBZYA97c4QMQihxcAl1U/WU4SyypiwPdO3fm/mbZts8flJY7rHGWCh1/Yz1e6cH3/06YS4YckPlx43Y1qO5bhnqQwKhHCs873FQ17YRAxc/H71X2gQiNqXOkbc5SEgCNFQlFSM781PDEQDYF+CWamazg/f1Cfs5raY9IJ3DRD7PMuZ5p0AD6YDvlAKWF4iaFlKR/v8WjyLMD1uSvxtvxX+WCT8cjSviSCKyXjDfaPyFjaWrxDI6mYUT3Lbikks0VN60u9XEXwjOUYfWTcnTvK0JE+59i/JIV8BgcqXyPtk6dqOXhtbwC0MdTJKNONDWTVd9SzanTOwVCuQ=
-  file: dist/musicsort Setup 1.0.0.exe
+    secure: OUz2PKSBxomIl71q9eRIkVoiSDfXQ+5qJAuH+uRIGg0yuDiysJ8TE7vqxLsLFwQ4TOG16Iz4nvR/bHMhMn0c8vcia+wjIFpivP8dp3qMtHp2i6f6GgDjPR9UD8Ud1DTmqm5OIDJqJdLxfpWRm2UZnQaI1GuJrLh8lawQ2LckevvRjyHGqOm3kXihkEw4fPdi6CK3EFkmaeOAzGbejyFYtm+iKO1RVLHvxvViaOxwOPtThFONOxHG/2dZNB2uuW9ms8rXZvg3H3vqGZjGXLAY7nSTwbjxOUDmqK+XDSKHVm9U493DhS7HgTDISGifmg4ro3y5YQPa7XeM4MkbmgiPgdvczeA17ilQUBYIsbxWb7hAKREkzreJPUUxwo6kZX1mxZ0jTLA09ZmSYrH5NLUcA/4M6A0F26zzQpwIQfbGtBZBjomsSfdxSW+6/1dyEoXJ9puJEIDWZXJKq1WKG0e5IpHPru0yCIaplFYKw8nZkviXU3itwqWKeBC6CGhX06u1U7pL08/Ns9Hy8jlfxbMgvFbbUqhpo3nTlPLWMHOTp4Mvl2jSuLCvaEfdH/F8cdn++nojD2zaoW3HhXDOYrCK0l4cURQdDognLWoQPMk8R+qthp+I2aj+eOT/kykXqdmPNgjjdj/aRL9NNWAAj+d7ppBlJFd+JgBhwXlKDhmBBfA=
+  file: dist/musicsort Setup *
   on:
     repo: moriczgergo/musicsort
