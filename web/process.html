@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>MusicSort</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" href="css/index.css">
+	</head>
+	<body>
+		<absolute>
+			<table>
+				<tr id="vc">
+					<td><h1>Processing...</h1></td>
+				</tr>
+			</table>
+		</absolute>
+
+		<!-- All of the Node.js APIs are available in this renderer process. -->
+		<div id="debug">
+			n<script>document.write(process.versions.node);</script> | c<script>document.write(process.versions.chrome);</script> | e<script>document.write(process.versions.electron);</script> | <script>document.write(require('./../package.json').version);</script>
+		</div>
+
+		<!-- Bootstrap imports -->
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/tether.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<script>
+			var fs = require('electron').remote.require('fs');
+			var path = require('electron').remote.require('path');
+			var nodeID3 = require('electron').remote.require('node-id3');
+
+			function getParameterByName(name, url) {
+				if (!url) url = window.location.href;
+				name = name.replace(/[\[\]]/g, "\\$&");
+				var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+					results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, " "));
+			}
+
+			var folder = getParameterByName("directory");
+			var files = [];
+			var fileStatuses = [];
+
+			function checkHandler(stats,filename) {
+				if (stats.isDirectory()){
+					console.log("Found subdirectory '" + filename +"'.");
+					fs.readdirSync(filename).forEach(function(file){
+						checkHandler(fs.statSync(path.join(filename, file)), path.join(filename, file))
+					});
+				} else if (stats.isFile()) {
+					console.log("Found file '" + filename +"'.");
+					var extension = path.extname(filename);
+					if (extension == ".mp3") {
+						console.log("File '" + filename +"' is mp3.");
+						files.push(filename);
+					} else {
+						console.log("File '" + filename +"' is not mp3.");
+					}
+				}
+			}
+			if (folder){
+				fs.readdirSync(folder).forEach(function(file){
+					checkHandler(fs.statSync(path.join(folder, file)), path.join(folder, file));
+				});
+				console.log(files);
+				if (files.length > 0){
+					files.forEach(function(filepath, index){
+						var tags = {};
+						var filename = path.basename(filepath, path.extname(filepath));
+						var tokens = filename.split('-');
+						if (tokens.length > 2) {
+							var newTokens = [];
+							newTokens[0] = tokens[0];
+							tokens.shift()
+							newTokens[1] = "";
+							tokens.forEach(function(token) {
+								newTokens[1] += token;
+							});
+							tokens = newTokens;
+						}
+						if (tokens.length == 2) {
+							console.log("Successfully split filename to two tokens.");
+							tags.title = tokens[1].trim();
+							tags.artist = tokens[0].trim();
+							var result = nodeID3.write(tags, filepath);
+							if (result) {
+								console.log("Sucessfully tagged file.");
+								fileStatuses[index] = 0;
+							} else {
+								console.log("Failed to tag file.");
+								fileStatuses[index] = 2;
+							}
+						} else {
+							console.log("Failed to split filename. Filename: '" + filename + "'. Tokens: " + tokens.length + ".");;
+							fileStatuses[index] = 1;
+						}
+					});
+					window.location.href = "finished.html?files=" + encodeURIComponent(JSON.stringify(files)) + "&status=" + encodeURIComponent(JSON.stringify(fileStatuses));
+				} else {
+					console.log("No mp3 files found.");
+					alert("No mp3 files found!");
+					window.location.href = "index.html";
+				}
+			} else {
+				alert("No directory param supplied!");
+				window.location.href = "index.html";
+			}
+		</script>
+	</body>
+
+	<script>
+		// You can also require other files to run in this process
+		require('./../renderer.js')
+	</script>
+</html>

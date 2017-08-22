@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>MusicSort</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" href="css/index.css">
+	</head>
+	<body>
+		<h1 id="header">MusicSort</h1>
+
+		<absolute>
+			<table>
+				<tr class="vc">
+					<td><button type="button" class="btn btn-secondary" id="start-btn">Select Music Folder</button></td>
+				</tr>
+			</table>
+		</absolute>
+
+		<!-- All of the Node.js APIs are available in this renderer process. -->
+		<div id="debug">
+			n<script>document.write(process.versions.node);</script> | c<script>document.write(process.versions.chrome);</script> | e<script>document.write(process.versions.electron);</script> | <script>document.write(require('./../package.json').version);</script>
+		</div>
+
+		<!-- Bootstrap imports -->
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/tether.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+
+		<script>
+			document.getElementById("start-btn").onclick = function(){
+				const remote = require('electron').remote;
+				const dialog = remote.dialog;
+				var result = dialog.showOpenDialog({properties: ['openDirectory']});
+				if (typeof result != "undefined") {
+					window.location.href = "process.html?directory=" + encodeURIComponent(result[0]);
+				} else {
+					alert("Please select a folder where your music is.");
+				}
+			}
+		</script>
+	</body>
+
+	<script>
+		// You can also require other files to run in this process
+		require('./../renderer.js')
+	</script>
+</html>

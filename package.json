@@ -1,0 +1,28 @@
+{
+  "name": "musicsort",
+  "version": "1.0.0",
+  "description": "Say goodbye to Unknown Artist.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir --win --ia32 --x64",
+    "dist": "electron-builder --win --ia32 --x64"
+  },
+  "repository": "https://github.com/moriczgergo/musicsort",
+  "keywords": [
+    "Electron",
+    "mp3tag"
+  ],
+  "author": "skiilaa",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "electron": "~1.6.2",
+    "electron-builder": "^19.24.1"
+  },
+  "dependencies": {
+    "node-id3": "^0.0.10"
+  },
+  "build": {
+    "appId": "me.skiilaa.musicsort"
+  }
+}

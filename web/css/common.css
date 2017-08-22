@@ -1,0 +1,15 @@
+html {
+    width: 100vw;
+    height: 100vh;
+}
+body {
+/*    margin-top: 5%;
+    margin-left: 5%;*/
+}
+#debug {
+    margin: 0px;
+    padding: 0px;
+    position:absolute;
+    bottom:0px;
+    right:0px;
+}
