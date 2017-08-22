@@ -8,6 +8,7 @@ env:
   global:
     - ELECTRON_CACHE=$HOME/.cache/electron
     - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+    - DEBUG=electron-builder:*
 
 os:
   - linux
