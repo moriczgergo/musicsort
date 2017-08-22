@@ -4,6 +4,9 @@ node_js:
 cache:
   directories:
   - node_modules
+install:
+  - apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils wine1.8
+  - npm install
 script:
   - npm run dist
 deploy:
