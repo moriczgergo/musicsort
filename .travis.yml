@@ -5,6 +5,7 @@ cache:
   directories:
   - node_modules
 install:
+  - sudo apt-get update
   - sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils wine1.8 gcc-multilib g++-multilib
   - npm install
 script:
