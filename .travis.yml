@@ -1,43 +1,44 @@
-osx_image: xcode8.3
 dist: trusty
-sudo: false
+sudo: required
+
 language: node_js
 node_js: '8'
+
 env:
   global:
-  - ELECTRON_CACHE=$HOME/.cache/electron
-  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+    - ELECTRON_CACHE=$HOME/.cache/electron
+    - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
 os:
-- linux
-- osx
+  - linux
+
 cache:
   directories:
-  - node_modules
-  - "$HOME/.cache/electron"
-  - "$HOME/.cache/electron-builder"
-  - "$HOME/.npm/_prebuilds"
+    - node_modules
+    - "$HOME/.cache/electron"
+    - "$HOME/.cache/electron-builder"
+    - "$HOME/.npm/_prebuilds"
+
 addons:
   apt:
     packages:
     - libsecret-1-0
+
 before_install:
-  - mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.2.0/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.2.0.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1 && /tmp/git-lfs/git-lfs pull
+  - mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.2.0/git-lfs-linux-amd64-2.2.0.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1 && /tmp/git-lfs/git-lfs pull
   - curl -L https://yarnpkg.com/latest.tar.gz | tar xvz && mv dist $HOME/.yarn
   - export PATH="$HOME/.yarn/bin:$PATH"
+  - sudo add-apt-repository ppa:ubuntu-wine/ppa -y && sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF && echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list && sudo apt-get update && sudo apt-get install --no-install-recommends -y mono-devel ca-certificates-mono wine1.8 gcc-multilib g++-multilib icnsutils graphicsmagick xz-utils
+
 install:
-- yarn
+  - yarn
+
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then yarn dist; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn dist --mac --win; fi
+  - yarn dist --linux --win --ia32 --x64
+
 before_cache:
-- rm -rf $HOME/.cache/electron-builder/wine
+  - rm -rf $HOME/.cache/electron-builder/wine
+
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
-deploy:
-  provider: releases
-  api_key:
-    secure: OUz2PKSBxomIl71q9eRIkVoiSDfXQ+5qJAuH+uRIGg0yuDiysJ8TE7vqxLsLFwQ4TOG16Iz4nvR/bHMhMn0c8vcia+wjIFpivP8dp3qMtHp2i6f6GgDjPR9UD8Ud1DTmqm5OIDJqJdLxfpWRm2UZnQaI1GuJrLh8lawQ2LckevvRjyHGqOm3kXihkEw4fPdi6CK3EFkmaeOAzGbejyFYtm+iKO1RVLHvxvViaOxwOPtThFONOxHG/2dZNB2uuW9ms8rXZvg3H3vqGZjGXLAY7nSTwbjxOUDmqK+XDSKHVm9U493DhS7HgTDISGifmg4ro3y5YQPa7XeM4MkbmgiPgdvczeA17ilQUBYIsbxWb7hAKREkzreJPUUxwo6kZX1mxZ0jTLA09ZmSYrH5NLUcA/4M6A0F26zzQpwIQfbGtBZBjomsSfdxSW+6/1dyEoXJ9puJEIDWZXJKq1WKG0e5IpHPru0yCIaplFYKw8nZkviXU3itwqWKeBC6CGhX06u1U7pL08/Ns9Hy8jlfxbMgvFbbUqhpo3nTlPLWMHOTp4Mvl2jSuLCvaEfdH/F8cdn++nojD2zaoW3HhXDOYrCK0l4cURQdDognLWoQPMk8R+qthp+I2aj+eOT/kykXqdmPNgjjdj/aRL9NNWAAj+d7ppBlJFd+JgBhwXlKDhmBBfA=
-  file: dist/musicsort Setup *
-  on:
-    repo: moriczgergo/musicsort
