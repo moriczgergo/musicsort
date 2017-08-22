@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- '8'
+cache:
+  directories:
+  - node_modules
+script:
+  - npm dist
+deploy:
+  provider: releases
+  api_key:
+    secure: wrbQ1q4oHxrIUg4Fvbzj8AbRovm6+lqF79VWDGh71TZPrROhESkn+HFT5cFSlLgkhCnD0pZ0nzNHbURbtdIPJt494sin5LkcF5yc3jGWfU6qHtHxeQL7iy8vlODzUGqYJ0rpYFH/4J2z3yYWXJ+fJnBwI2YHPyuu9sV7HynHsDHVqY+T5UKX5ESTmRoe3MyYjx96SmOjJD00zqZxBsdAMp8vbZG/CocvHWJemzSpqaUBxqaw/qAW9UsiDgHjEUUKSpFGKSA6CmyCtNmL9utyZOSVAilMjUQ0YqMvxowPQpEkAIAccJylGozM7KhJvMi24Hhfgr+k2AQLrCkULXO//LUdGV6uwCBZYA97c4QMQihxcAl1U/WU4SyypiwPdO3fm/mbZts8flJY7rHGWCh1/Yz1e6cH3/06YS4YckPlx43Y1qO5bhnqQwKhHCs873FQ17YRAxc/H71X2gQiNqXOkbc5SEgCNFQlFSM781PDEQDYF+CWamazg/f1Cfs5raY9IJ3DRD7PMuZ5p0AD6YDvlAKWF4iaFlKR/v8WjyLMD1uSvxtvxX+WCT8cjSviSCKyXjDfaPyFjaWrxDI6mYUT3Lbikks0VN60u9XEXwjOUYfWTcnTvK0JE+59i/JIV8BgcqXyPtk6dqOXhtbwC0MdTJKNONDWTVd9SzanTOwVCuQ=
+  file: dist/musicsort Setup 1.0.0.exe
+  on:
+    repo: moriczgergo/musicsort
