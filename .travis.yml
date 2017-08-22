@@ -5,8 +5,11 @@ cache:
   directories:
   - node_modules
 install:
+  - wget -nc https://dl.winehq.org/wine-builds/Release.key
+  - sudo apt-key add Release.key
+  - sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
   - sudo apt-get update
-  - sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils wine1.8 gcc-multilib g++-multilib
+  - sudo apt-get install --no-install-recommends -y icnsutils graphicsmagick xz-utils winehq-stable gcc-multilib g++-multilib
   - npm install
 script:
   - npm run dist
