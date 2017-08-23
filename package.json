@@ -6,7 +6,8 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-builder --dir --win --ia32 --x64",
-    "dist": "electron-builder --win --ia32 --x64"
+    "dist": "electron-builder --win --ia32 --x64",
+    "ciscript" :"electron-builder --ia32 --x64"
   },
   "repository": "https://github.com/moriczgergo/musicsort",
   "keywords": [
